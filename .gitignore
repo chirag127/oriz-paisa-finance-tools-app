@@ -317,3 +317,4 @@ pyrightconfig.json
 
 build_log.txt
 package-lock.json
+build_error.txt

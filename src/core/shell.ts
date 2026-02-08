@@ -1,9 +1,11 @@
 /**
- * FinSuite OS - Shell (Dock + Sidebar + Window Manager)
+ * FinSuite OS - Shell (Header + Sidebar + Footer + Dock + Window Manager)
  * macOS-like UI with glassmorphism
  */
 
 import { router, routes, type Route } from './router';
+import { renderHeader, initHeader, updateHeaderActiveState } from '../components/layout/Header';
+import { renderFooter } from '../components/layout/Footer';
 
 const DRIVE_LABELS: Record<Route['drive'], { label: string; icon: string }> = {
   wealth: { label: 'Wealth', icon: '💎' },
@@ -37,11 +39,32 @@ class Shell {
       router.init(this.mainContent);
     }
 
+    // Initialize header with sidebar toggle callback
+    initHeader(() => this.toggleSidebar());
+
     // Setup event listeners
     this.setupEventListeners();
 
-    // Update active states on navigation
+    // Update active states on navigation (includes header)
     router.onNavigate((path) => this.updateActiveStates(path));
+  }
+
+  /**
+   * Toggle sidebar open/closed state
+   */
+  private toggleSidebar(): void {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    if (this.sidebarOpen) {
+      this.sidebarOpen = false;
+      sidebar?.classList.remove('open');
+      overlay?.classList.remove('active');
+    } else {
+      this.sidebarOpen = true;
+      sidebar?.classList.add('open');
+      overlay?.classList.add('active');
+    }
   }
 
   /**
@@ -49,10 +72,8 @@ class Shell {
    */
   private render(): string {
     return `
-      <!-- Mobile Menu Toggle -->
-      <button class="mobile-menu-btn" id="sidebar-toggle" aria-label="Toggle menu">
-        ☰
-      </button>
+      <!-- Site Header -->
+      ${renderHeader()}
 
       <!-- Sidebar Overlay -->
       <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -67,10 +88,16 @@ class Shell {
         ${this.renderSidebarNav()}
       </aside>
 
-      <!-- Main Content -->
-      <main class="main" id="main-content">
-        <!-- Content loaded by router -->
-      </main>
+      <!-- Main Content Wrapper -->
+      <div class="main-wrapper">
+        <!-- Main Content -->
+        <main class="main" id="main-content">
+          <!-- Content loaded by router -->
+        </main>
+
+        <!-- Site Footer -->
+        ${renderFooter()}
+      </div>
 
       <!-- Dock -->
       <nav class="dock" id="dock">
@@ -199,7 +226,7 @@ class Shell {
   }
 
   /**
-   * Update active states in sidebar and dock
+   * Update active states in sidebar, dock, and header
    */
   private updateActiveStates(path: string): void {
     // Update sidebar links
@@ -213,6 +240,9 @@ class Shell {
       const itemPath = item.getAttribute('data-path');
       item.classList.toggle('active', itemPath === path);
     });
+
+    // Update header navigation
+    updateHeaderActiveState(path);
 
     // Close sidebar on mobile after navigation
     if (window.innerWidth < 1024) {
