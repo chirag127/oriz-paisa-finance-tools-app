@@ -1,5 +1,5 @@
 ---
-import { SITES } from '~/lib/sites'
+import { FAMILY, FAMILY_SITES } from '@chirag127/oriz-ui'
 import { SITE_CONFIG } from '~/lib/siteConfig'
 const year = new Date().getFullYear()
 ---
@@ -8,15 +8,13 @@ const year = new Date().getFullYear()
   <div class="container-page footer-inner">
     <div class="footer-col">
       <p class="footer-brand">{SITE_CONFIG.name} <span class="footer-fam">— oriz</span></p>
-      <p class="footer-tag">
-        {SITE_CONFIG.tagline}
-      </p>
+      <p class="footer-tag">{SITE_CONFIG.tagline}.</p>
     </div>
 
     <div class="footer-col">
       <h2 class="footer-h">Family</h2>
       <ul class="footer-links">
-        {SITES.map((s) => (
+        {FAMILY_SITES.map((s) => (
           <li><a href={s.url}>{s.name}</a></li>
         ))}
       </ul>
@@ -28,7 +26,7 @@ const year = new Date().getFullYear()
         <li><a href="/">Home</a></li>
         <li><a href="/about/">About</a></li>
         <li><a href="/contact/">Contact</a></li>
-        <li><a href="https://oriz.in">oriz hub</a></li>
+        <li><a href={FAMILY.rootOrigin}>oriz hub</a></li>
       </ul>
     </div>
 
@@ -44,18 +42,18 @@ const year = new Date().getFullYear()
     </div>
   </div>
 
-  <div class="container-page sebi-strip">
+  <div class="container-page sebi-strip" role="note" aria-label="SEBI disclaimer">
     <p>
-      <strong>SEBI disclaimer:</strong> Calculators on {SITE_CONFIG.name} are for
-      educational use only — not investment, tax, or insurance advice. We are not
-      a SEBI-registered investment advisor and do not recommend any product or
-      institution. Verify computations and consult a qualified advisor before acting.
-      See the full <a href="/legal/disclaimer/">disclaimer</a>.
+      <strong>SEBI disclaimer:</strong> Calculators on this site are for educational
+      purposes only. Outputs are based on user inputs and do not constitute
+      investment, tax, or insurance advice. Consult a SEBI-registered investment
+      advisor before making financial decisions. Past performance is not indicative
+      of future returns. See the full <a href="/legal/disclaimer/">disclaimer</a>.
     </p>
   </div>
 
   <div class="container-page footer-bottom">
-    <p>&copy; {year} Chirag Singhal. All sites built with <a href="https://github.com/chirag127/oriz">oriz</a>.</p>
+    <p>&copy; {year} {FAMILY.operator.name}. All sites built with <a href="https://github.com/chirag127/oriz">oriz</a>.</p>
   </div>
 </footer>
 
@@ -96,6 +94,7 @@ const year = new Date().getFullYear()
     padding: 1rem 1.5rem;
     background: var(--color-bg-muted);
     border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-accent);
     border-radius: var(--radius-card);
     color: var(--color-fg-muted);
     font-size: 0.8125rem;

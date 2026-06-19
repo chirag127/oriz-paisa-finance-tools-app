@@ -1,10 +1,12 @@
 /**
- * Header controls — search dialog (⌘K), theme switcher, accent picker, sign-in button.
- * One React island for the whole interactive cluster so we ship a single hydration boundary.
+ * Header controls — search dialog (Ctrl/Cmd+K), theme switcher, accent picker,
+ * sign-in CTA. One React island for the whole interactive cluster so we ship
+ * a single hydration boundary. Family-quick-jump search uses FAMILY_SITES from
+ * @chirag127/oriz-ui so adding a site to the family lights up everywhere.
  */
 import { useEffect, useId, useRef, useState } from 'react'
 import { Palette, Search, Sun, User } from 'lucide-react'
-import type { Site } from '~/lib/sites'
+import { type FamilySite, FAMILY_SITES } from '@chirag127/oriz-ui'
 
 const THEMES = [
   { id: 'dark', label: 'Dark' },
@@ -26,11 +28,12 @@ type ThemeId = (typeof THEMES)[number]['id']
 type AccentId = (typeof ACCENTS)[number]['id']
 
 interface Props {
-  sites: Site[]
   siteName: string
+  /** Optional override — defaults to FAMILY_SITES from oriz-ui. */
+  sites?: FamilySite[]
 }
 
-export default function HeaderControls({ sites, siteName }: Props) {
+export default function HeaderControls({ siteName, sites = FAMILY_SITES }: Props) {
   const [theme, setTheme] = useState<ThemeId>('dark')
   const [accent, setAccent] = useState<AccentId>('amber')
   const [searchOpen, setSearchOpen] = useState(false)
@@ -84,11 +87,11 @@ export default function HeaderControls({ sites, siteName }: Props) {
           type="button"
           className="ctrl-btn"
           onClick={() => setSearchOpen(true)}
-          aria-label={`Search the oriz family from ${siteName} (⌘K)`}
+          aria-label={`Search the oriz family from ${siteName} (Ctrl+K)`}
         >
           <Search size={16} aria-hidden="true" />
           <span className="ctrl-label">Search</span>
-          <kbd className="kbd">⌘K</kbd>
+          <kbd className="kbd">Ctrl K</kbd>
         </button>
 
         <div className="ctrl-group">
@@ -170,7 +173,7 @@ export default function HeaderControls({ sites, siteName }: Props) {
                 </li>
               ))}
               {filtered.length === 0 && (
-                <li className="search-empty">No sites match “{query}”.</li>
+                <li className="search-empty">No sites match &ldquo;{query}&rdquo;.</li>
               )}
             </ul>
           </div>

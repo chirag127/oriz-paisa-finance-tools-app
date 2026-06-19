@@ -1,12 +1,15 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import { SITE_CONFIG } from '~/lib/siteConfig'
+import { AccountPanel } from '@chirag127/oriz-ui'
+import '~/lib/firebase'
 ---
 
 <BaseLayout
   title={`Account — ${SITE_CONFIG.name}`}
   description={`Sign in to ${SITE_CONFIG.name}. One account works across every oriz site.`}
   noindex={true}
+  withSidebar={false}
 >
   <header class="container-prose page-head">
     <p class="eyebrow"><a href="/">{SITE_CONFIG.name}</a> / Account</p>
@@ -17,20 +20,8 @@ import { SITE_CONFIG } from '~/lib/siteConfig'
     </p>
   </header>
 
-  <section class="container-prose panel">
-    <p class="placeholder">
-      Sign-in is wired through Firebase Authentication on
-      <code>auth.oriz.in</code>. The interactive panel will mount here once the
-      shared <code>@chirag127/oriz-ui</code> package is installed:
-    </p>
-    <pre class="code">{`---
-import AccountPanel from '@chirag127/oriz-ui/AccountPanel'
----
-<AccountPanel client:load />`}</pre>
-    <p class="placeholder">
-      In the meantime, sign in on any sibling site (e.g. <a href="https://oriz.in/account/">oriz.in</a>)
-      and you will be signed in here.
-    </p>
+  <section class="container-prose">
+    <AccountPanel client:load siteName={SITE_CONFIG.name} />
   </section>
 </BaseLayout>
 
@@ -40,18 +31,4 @@ import AccountPanel from '@chirag127/oriz-ui/AccountPanel'
   .eyebrow a { color: var(--color-fg-muted); text-decoration: none; }
   h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
   .lede { color: var(--color-fg-muted); margin: 0.75rem 0 0; font-size: 1.0625rem; max-width: 56ch; }
-  .panel { padding-block: 2.5rem 4rem; color: var(--color-prose); line-height: 1.7; }
-  .placeholder { color: var(--color-fg-muted); }
-  .placeholder a { color: var(--color-accent); }
-  .code {
-    background: var(--color-bg-soft);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    padding: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    overflow-x: auto;
-    margin-block: 1.5rem;
-  }
-  code { background: var(--color-bg-muted); padding: 0.125em 0.375em; border-radius: 0.25rem; font-family: var(--font-mono); font-size: 0.875em; }
 </style>

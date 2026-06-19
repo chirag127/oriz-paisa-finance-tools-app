@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro'
-import { SITE_CONFIG } from '~/lib/siteConfig'
+import { SITE_CONFIG, SITE_EMOJI } from '~/lib/siteConfig'
+import { FAMILY } from '@chirag127/oriz-ui'
+import SIPCalculator from '~/components/calculators/SIPCalculator.tsx'
+import EMICalculator from '~/components/calculators/EMICalculator.tsx'
 
 const calculatorGroups = [
   {
@@ -27,35 +30,49 @@ const jsonLd = {
   name: `${SITE_CONFIG.name} — oriz`,
   url: SITE_CONFIG.origin,
   description: SITE_CONFIG.description,
-  publisher: { '@type': 'Person', name: 'Chirag Singhal', url: 'https://oriz.in/about/' },
+  publisher: { '@type': 'Person', name: FAMILY.operator.name, url: `${FAMILY.rootOrigin}/about/` },
 }
 ---
 
 <BaseLayout jsonLd={jsonLd}>
-  <section class="hero">
-    <div class="container-page hero-inner">
-      <p class="eyebrow">📊 Part of the <a href="https://oriz.in">oriz</a> family</p>
-      <h1 class="hero-h">
-        Calculators that<br />
-        <span class="hero-accent">show the math</span>.
-      </h1>
-      <p class="hero-lede">
-        {SITE_CONFIG.tagline}. Every input mapped to every output, with the
-        formula on screen — not a black box.
-      </p>
-      <div class="hero-cta">
-        <a href="#calculators" class="btn btn-primary">Browse calculators →</a>
-        <a href="/about/" class="btn">About this site</a>
-      </div>
+  <section class="hero container-page">
+    <p class="eyebrow">{SITE_EMOJI} Part of the <a href={FAMILY.rootOrigin}>oriz</a> family</p>
+    <h1 class="hero-h">
+      Calculators that <span class="hero-accent">show the math</span>.
+    </h1>
+    <p class="hero-lede">
+      {SITE_CONFIG.tagline}. Every input mapped to every output, with the formula
+      on screen — not a black box. Math runs in your browser; nothing leaves your device.
+    </p>
+    <div class="hero-cta">
+      <a href="#sip" class="btn btn-primary">Try the SIP calculator →</a>
+      <a href="#catalogue" class="btn">Browse all calculators</a>
     </div>
   </section>
 
-  <section id="calculators" class="container-page section">
-    <h2 class="section-h">Calculators</h2>
+  <section id="sip" class="container-page section">
+    <h2 class="section-h">SIP — future value</h2>
     <p class="section-lede">
-      The new {SITE_CONFIG.name} site is being rebuilt on the shared oriz design
-      system. The legacy app under this repo continues to run; the catalogue
-      below is what lands here next.
+      How much will a monthly SIP grow into? Punch in the amount, expected return,
+      and tenure; the formula and year-by-year breakdown are right below the result.
+    </p>
+    <SIPCalculator client:idle />
+  </section>
+
+  <section id="emi" class="container-page section">
+    <h2 class="section-h">Home loan — EMI</h2>
+    <p class="section-lede">
+      Standard amortising EMI for any principal, rate, and tenure. No lead capture,
+      no &ldquo;talk to an advisor&rdquo; popup — just the formula and the answer.
+    </p>
+    <EMICalculator client:idle />
+  </section>
+
+  <section id="catalogue" class="container-page section">
+    <h2 class="section-h">Calculator catalogue</h2>
+    <p class="section-lede">
+      The full set lands on the sub-pages as the math is wired up. The two above
+      are live; the rest follow as React islands using the same shape.
     </p>
 
     <div class="cat-grid">
@@ -89,8 +106,7 @@ const jsonLd = {
 </BaseLayout>
 
 <style>
-  .hero { padding-block: 5rem 4rem; border-bottom: 1px solid var(--color-border); }
-  .hero-inner { max-width: 720px; margin-inline: auto; text-align: center; }
+  .hero { padding-block: 3rem 2.5rem; border-bottom: 1px solid var(--color-border); }
   .eyebrow {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -99,46 +115,49 @@ const jsonLd = {
     border: 1px solid var(--color-border);
     color: var(--color-fg-muted);
     font-size: 0.75rem;
-    margin: 0 0 1.5rem;
+    margin: 0 0 1rem;
   }
   .eyebrow a { color: var(--color-fg-muted); }
   .eyebrow a:hover { color: var(--color-accent); }
   .hero-h {
     font-family: var(--font-serif);
-    font-size: clamp(2.25rem, 6vw, 3.75rem);
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.1;
-    margin: 0 0 1.25rem;
+    margin: 0 0 1rem;
+    max-width: 24ch;
   }
   .hero-accent { color: var(--color-accent); }
-  .hero-lede { color: var(--color-fg-muted); font-size: 1.125rem; max-width: 56ch; margin: 0 auto 2rem; }
-  .hero-cta { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+  .hero-lede { color: var(--color-fg-muted); font-size: 1.0625rem; max-width: 60ch; margin: 0 0 1.5rem; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 0.625rem; }
   .btn {
     display: inline-flex; align-items: center; gap: 0.5rem;
-    height: 44px; padding-inline: 1.25rem;
+    height: 40px; padding-inline: 1rem;
     background: var(--color-bg-soft);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-button);
     color: var(--color-fg); font-weight: 500; text-decoration: none;
+    font-size: 0.9375rem;
   }
   .btn:hover { border-color: color-mix(in oklab, var(--color-accent) 50%, var(--color-border)); color: var(--color-fg); }
   .btn-primary { background: var(--color-accent); color: var(--color-accent-fg); border-color: var(--color-accent); }
   .btn-primary:hover { color: var(--color-accent-fg); }
 
-  .section { padding-block: 4rem; }
+  .section { padding-block: 3rem; border-bottom: 1px solid var(--color-border); }
+  .section:last-of-type { border-bottom: 0; }
   .section-h {
     font-family: var(--font-serif);
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-size: clamp(1.375rem, 3vw, 1.875rem);
     font-weight: 600;
     letter-spacing: -0.01em;
-    margin: 0 0 1rem;
+    margin: 0 0 0.75rem;
   }
-  .section-lede { color: var(--color-fg-muted); max-width: 64ch; margin: 0 0 2.5rem; font-size: 1.0625rem; }
+  .section-lede { color: var(--color-fg-muted); max-width: 64ch; margin: 0 0 2rem; font-size: 1rem; }
 
   .cat-grid {
     display: grid; gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
   .cat {
     padding: 1.25rem;

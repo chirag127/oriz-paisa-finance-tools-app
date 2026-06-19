@@ -3,6 +3,7 @@ import '~/styles/global.css'
 import preflight from '~/lib/preflight.js?raw'
 import Header from '~/components/Header.astro'
 import Footer from '~/components/Footer.astro'
+import SiteSidebar from '~/components/SiteSidebar.astro'
 import { SITE_CONFIG } from '~/lib/siteConfig'
 
 interface Props {
@@ -11,6 +12,8 @@ interface Props {
   canonical?: string
   noindex?: boolean
   jsonLd?: Record<string, unknown> | Record<string, unknown>[]
+  /** Render the left sidebar? Defaults true. */
+  withSidebar?: boolean
 }
 
 const {
@@ -19,14 +22,16 @@ const {
   canonical = `${SITE_CONFIG.origin}${Astro.url.pathname}`,
   noindex = false,
   jsonLd,
+  withSidebar = true,
 } = Astro.props
 
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT
 const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN
+const ga4Id = import.meta.env.PUBLIC_GA4_ID
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent="amber">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -78,11 +83,25 @@ const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN
         data-cf-beacon={`{"token": "${beaconToken}"}`}
       />
     )}
+
+    {ga4Id && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`} />
+        <script is:inline set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ga4Id}');`} />
+      </>
+    )}
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
     <Header />
-    <main id="main"><slot /></main>
+    {withSidebar ? (
+      <div class="with-sidebar">
+        <SiteSidebar />
+        <main id="main"><slot /></main>
+      </div>
+    ) : (
+      <main id="main"><slot /></main>
+    )}
     <Footer />
 
     <style is:global>

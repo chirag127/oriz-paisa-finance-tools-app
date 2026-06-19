@@ -1,32 +1,21 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import { SITE_CONFIG } from '~/lib/siteConfig'
+import { FinishSignIn } from '@chirag127/oriz-ui'
+import '~/lib/firebase'
 ---
 
 <BaseLayout
   title={`Finishing sign-in — ${SITE_CONFIG.name}`}
   description="Completing email-link sign-in."
   noindex={true}
+  withSidebar={false}
 >
   <section class="container-prose finish">
-    <h1>Finishing sign-in…</h1>
-    <p>
-      If this page does not redirect you within a few seconds, the magic link
-      may have expired. Request a new one from the
-      <a href="/account/">account page</a>.
-    </p>
-    <p class="meta">
-      Once <code>@chirag127/oriz-ui</code> is wired up, the
-      <code>FinishSignIn</code> island handles the
-      <code>signInWithEmailLink</code> handshake here automatically.
-    </p>
+    <FinishSignIn client:load successPath="/account/" />
   </section>
 </BaseLayout>
 
 <style>
-  .finish { padding-block: 5rem 4rem; text-align: center; color: var(--color-prose); }
-  h1 { font-family: var(--font-serif); font-size: clamp(1.5rem, 3vw, 2rem); margin: 0 0 1rem; }
-  .meta { color: var(--color-fg-muted); font-size: 0.875rem; margin-top: 2rem; }
-  a { color: var(--color-accent); }
-  code { background: var(--color-bg-muted); padding: 0.125em 0.375em; border-radius: 0.25rem; font-family: var(--font-mono); font-size: 0.875em; }
+  .finish { padding-block: 5rem 4rem; }
 </style>
