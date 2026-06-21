@@ -1,15 +1,4 @@
 // @ts-check
+import { shell } from '@chirag127/astro-shell/shell'
 
-import react from '@astrojs/react'
-import sitemap from '@astrojs/sitemap'
-import tailwindcss from '@tailwindcss/vite'
-import { defineConfig } from 'astro/config'
-
-export default defineConfig({
-  site: 'https://finance.oriz.in',
-  output: 'static',
-  trailingSlash: 'ignore',
-  build: { format: 'directory' },
-  integrations: [react(), sitemap()],
-  vite: { plugins: [tailwindcss()] },
-})
+export default shell({ site: 'https://finance.oriz.in', includeMdx: false })

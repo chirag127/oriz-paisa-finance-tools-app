@@ -1,8 +1,4 @@
-/**
- * Per-site config for oriz-finance. The OrizSiteConfig type is owned by
- * @chirag127/oriz-ui so every site uses the same shape.
- */
-import type { OrizSiteConfig } from '@chirag127/oriz-ui'
+import type { OrizSiteConfig } from '@chirag127/astro-shell/types'
 
 export const SITE_CONFIG: OrizSiteConfig = {
   slug: 'finance',
