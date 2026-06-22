@@ -1,26 +1,26 @@
 ---
 /*
- * BaseLayout — single page shell for every oriz-finance route.
+ * BaseLayout — per-app shell for oriz-finance.
+ *
+ * Sweep #5 revert (2026-06-22): Header is fully divergent per-app (restored
+ * from f0676f6^ with its FOLIO/ISSUE strip + MultiSearch/StatusBanner).
+ * Footer + Sidebar + BottomBar come from @chirag127/astro-chrome with
+ * per-app slot content (AppSidebarContent + bottomBarActions).
  *
  * v2 graph-paper-light surface. Fonts: Fraunces (display, H1 only) +
  * Source Sans 3 (body) + JetBrains Mono (every numeric, mandatory tnum).
- *
- * No theme picker — light/dark via prefers-color-scheme only. The dark
- * variant is a recessed inversion that keeps the graph grid visible.
- *
- * 2026-06-20 wiring (this commit):
- *   • Default <JsonLd> Organization + WebSite + Person triple in <head>.
- *   • Page-level `jsonLd` prop appends additional blocks (no replacement).
- *   • <FeedDiscovery /> link tags for /rss.xml + /atom.xml + /feed.json.
- *   • CF Web Analytics gated behind PUBLIC_ENABLE_CF_ANALYTICS=true.
- *   • <ConsentBanner /> mounted before </body> — Klaro lazy script.
- *   • Header now mounts <StatusBanner /> + <MultiSearch /> as React islands.
  */
 import '~/styles/global.css'
 import '~/styles/oriz-ui-overrides.css'
+import '@chirag127/astro-shell/tokens.css'
+import BottomBar from '@chirag127/astro-chrome/BottomBar.astro'
 import ConsentBanner from '@chirag127/astro-chrome/ConsentBanner.astro'
-import Layout from '@chirag127/astro-chrome/Layout.astro'
+import Footer from '@chirag127/astro-chrome/Footer.astro'
+import Sidebar from '@chirag127/astro-chrome/Sidebar.astro'
+import AppSidebarContent from '~/components/AppSidebarContent.astro'
+import Header from '~/components/Header.astro'
 import JsonLd from '~/components/JsonLd.astro'
+import { bottomBarActions } from '~/data/bottombar-actions'
 import { SITE_CONFIG } from '~/lib/siteConfig'
 
 interface Props {
@@ -43,13 +43,6 @@ const {
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT
 const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN
 const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
-const bottomBarActions = [
-  { icon: '⌂', label: 'Home', href: 'https://oriz.in/' },
-  { icon: '✎', label: 'Blog', href: 'https://blog.oriz.in/' },
-  { icon: '⚒', label: 'Tools', href: '/' },
-  { icon: 'ℹ', label: 'About', href: '/about/' },
-]
-import '@chirag127/astro-shell/tokens.css'
 ---
 
 <!doctype html>
@@ -73,19 +66,10 @@ import '@chirag127/astro-shell/tokens.css'
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    {/*
-      Feed discovery — three formats per
-      knowledge/decisions/architecture/feeds-rss-atom-json.md.
-      Cross-link to canonical apex feeds (oriz.in) from every site.
-    */}
     <link rel="alternate" type="application/rss+xml" title="oriz · RSS" href="/rss.xml" />
     <link rel="alternate" type="application/atom+xml" title="oriz · Atom" href="/atom.xml" />
     <link rel="alternate" type="application/feed+json" title="oriz · JSON Feed" href="/feed.json" />
 
-    {/*
-      Type stack — Fraunces (display, opsz 144 + soft -10), Source Sans 3
-      (body), JetBrains Mono (numerics).
-    */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -93,7 +77,6 @@ import '@chirag127/astro-shell/tokens.css'
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,30..100&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
     />
 
-    {/* Default Organization + WebSite + Person triple. */}
     <JsonLd extra={jsonLd} pageUrl={canonical} />
 
     {
@@ -107,7 +90,6 @@ import '@chirag127/astro-shell/tokens.css'
       )
     }
 
-    {/* Cloudflare Web Analytics — cookie-less, gated by PUBLIC_ENABLE_CF_ANALYTICS. */}
     {
       cfAnalyticsEnabled && beaconToken && (
         <script
@@ -121,9 +103,15 @@ import '@chirag127/astro-shell/tokens.css'
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
-    <Layout bottomBarActions={bottomBarActions}>
+    <Header />
+    <Sidebar>
+      <AppSidebarContent />
+    </Sidebar>
+    <main id="main">
       <slot />
-    </Layout>
+    </main>
+    <Footer />
+    <BottomBar actions={bottomBarActions} />
     <ConsentBanner />
   </body>
 </html>
